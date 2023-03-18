@@ -1,91 +1,66 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from './page.module.css'
+"use client";
+import { useState } from 'react';
 
-const inter = Inter({ subsets: ['latin'] })
+interface Message {
+  text: string;
+  isUser: boolean;
+}
 
-export default function Home() {
+export default function HomePage() {
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  async function handleMessageSubmit(text: string) {
+    setMessages([...messages, { text, isUser: true }]);
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+
+      const { message } = await res.json();
+
+      setMessages([...messages, { text: message, isUser: false }]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
+    <div>
+      <h1>Chat with ChatGPT-4</h1>
+      <ChatLog messages={messages} />
+      <ChatInput onSubmit={handleMessageSubmit} />
+    </div>
+  );
+}
+
+function ChatLog({ messages }: { messages: Message[] }) {
+  return (
+    <div>
+      {messages.map((message, i) => (
+        <p key={i} style={{ textAlign: message.isUser ? 'right' : 'left' }}>
+          {message.text}
         </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+      ))}
+    </div>
+  );
+}
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
+function ChatInput({ onSubmit }: { onSubmit: (text: string) => void }) {
+  const [text, setText] = useState('');
 
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    onSubmit(text);
+    setText('');
+  }
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+  return (
+    <form onSubmit={handleSubmit}>
+      <input type="text" value={text} onChange={e => setText(e.target.value)} />
+      <button type="submit">Send</button>
+    </form>
+  );
 }
