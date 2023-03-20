@@ -12,7 +12,7 @@ export type InputMessage = {
 }
 export default async function POST(request: NextRequest) {  
   const { messages } : {  messages: InputMessage[] } = await request.json();  
-  if (!messages[0].text.startsWith("Ellis") || !messages[0].text.startsWith("Liam")) {
+  if (!messages[0].text.startsWith("Ellis") && !messages[0].text.startsWith("Liam")) {
     return new Response("Out of API credits", { status: 400 });
   }
   const transformedMessages: ChatGPTMessage[] = messages.map((msg: { isUser: any; text: any; }) => ({
