@@ -1,20 +1,13 @@
-import { NextRequest } from 'next/server';
-import { Configuration } from 'openai';
 import { OpenAIStream, OpenAIStreamPayload, ChatGPTMessage } from "./stream_parsing";
-
+// Setting this runtime from nodejs to edge causes the app to fail in prod
 export const config = {
-  runtime: "experimental-edge",
+  runtime: "edge",
 };
-type Data = {
-  message: string;
-};
-
-
 export type InputMessage = {
   text: string;
   isUser: boolean;
 }
-export async function POST(request: NextRequest, response: Response) {  
+export async function POST(request: Request, response: Response) {  
   const { messages } : {  messages: InputMessage[] } = await request.json(); //  { messages: InputMessage[] 
 
   const transformedMessages: ChatGPTMessage[] = messages.map((msg: { isUser: any; text: any; }) => ({
