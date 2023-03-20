@@ -1,5 +1,6 @@
 import { OpenAIStream, OpenAIStreamPayload, ChatGPTMessage } from "./stream_parsing";
-import {NextRequest, NextFetchEvent} from 'next/server'
+import type {  NextRequest } from 'next/server';
+
 // Setting this runtime from nodejs to edge causes the app to fail in prod
 
 export const config = {
@@ -9,7 +10,7 @@ export type InputMessage = {
   text: string;
   isUser: boolean;
 }
-export default async function POST(request: NextRequest, context: NextFetchEvent) {  
+export default async function POST(request: NextRequest) {  
   const { messages } : {  messages: InputMessage[] } = await request.json();  
 
   const transformedMessages: ChatGPTMessage[] = messages.map((msg: { isUser: any; text: any; }) => ({
