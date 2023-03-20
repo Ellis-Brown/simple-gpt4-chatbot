@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { saveAs } from 'file-saver';
-import { InputMessage } from 'api/chat/route.ts';
+import { InputMessage } from './api/chat/route';
 
 interface Message {
   text: string;
