@@ -18,7 +18,7 @@ type InputMessage = {
   isUser: boolean;
 }
 export async function POST(request: NextRequest) {
-  const { messages }: { messages: InputMessage[] } = await request.json();
+  const { messages } = await request.json();
 
   const transformedMessages: ChatGPTMessage[] = messages.map(msg => ({
     role: msg.isUser ? "user" : "system",
@@ -34,9 +34,6 @@ export async function POST(request: NextRequest) {
   const stream = await OpenAIStream(payload);
   return new Response(stream);
 }
-
-
-
 
 const handler = async (req: Request): Promise<Response> => {
   const { prompt } = (await req.json()) as {
