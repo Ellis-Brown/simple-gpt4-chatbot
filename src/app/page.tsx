@@ -1,5 +1,7 @@
 "use client";
-import { useState } from 'react';
+import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import { saveAs } from 'file-saver';
 
 interface Message {
   text: string;
@@ -14,9 +16,25 @@ export default function HomePage() {
   const [streamedMessage, setStreamedMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-function functionSoon() {
-    console.log(messages);
-}
+  function combineMessages(messages: Message[]) {
+    const transformedMessages = messages.map(msg => ({
+      role: msg.isUser ? "user" : "system",
+      content: msg.text,
+    }));
+
+    return transformedMessages
+  }
+
+  function handleSaveClick() {
+    const combinedMessages = combineMessages(messages);
+    console.log(JSON.stringify(combinedMessages, null, 2));
+    const blob = new Blob([JSON.stringify(combinedMessages)], { type: 'text/json;charset=utf-8' });
+    // Get the current time for the filename
+    const date = new Date();
+    const timestamp = date.toISOString().replace(/[:.]/g, '-');
+    saveAs(blob, 'chat-history-' + timestamp + '.json');
+  }
+
 
   async function handleMessageSubmit(text: string) {
     setMessages([...messages, { text, isUser: true }]);
@@ -49,14 +67,14 @@ function functionSoon() {
       while (!done) {
 
         const { value, done: doneReading } = await reader.read();
-        
+
         done = doneReading;
         const chunkValue = decoder.decode(value);
         if (!done) {
           setStreamedMessage(msg => msg + chunkValue);
           full_msg = full_msg + chunkValue;
         }
-        
+
       }
       console.log(full_msg);
       setMessages(prevMessages => [...prevMessages, { text: full_msg, isUser: false }])
@@ -84,7 +102,9 @@ function functionSoon() {
       </div>
       <ChatLog messages={messages} streamedMessage={streamedMessage} />
       <ChatInput onSubmit={handleMessageSubmit} />
-<button onClick={functionSoon}> Press me </button>
+      <button onClick={handleSaveClick} className="mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-4 rounded-lg">
+        Save Chat History
+      </button>
     </div>
   );
 }
@@ -110,7 +130,7 @@ function ChatLog({ messages, streamedMessage }: { messages: Message[], streamedM
               whiteSpace: 'pre-wrap',
             }}
           >
-            <p>{message.text}</p>
+            <ReactMarkdown>{message.text}</ReactMarkdown>
           </div>
         </div>
       ))}
@@ -128,10 +148,10 @@ function ChatLog({ messages, streamedMessage }: { messages: Message[], streamedM
               color: '#FFFFFF',
               borderRadius: '10px',
               padding: '10px 15px',
-              whiteSpace: 'pre-wrap', 
+              whiteSpace: 'pre-wrap',
             }}
           >
-            <p>{streamedMessage}</p>
+            <ReactMarkdown>{streamedMessage}</ReactMarkdown>
           </div>
         </div>
       )}
@@ -142,31 +162,45 @@ function ChatLog({ messages, streamedMessage }: { messages: Message[], streamedM
 
 
 
-      function ChatInput({onSubmit}: {onSubmit: (text: string) => void }) {
+function ChatInput({onSubmit}: {onSubmit: (text: string) => void }) {
   const [text, setText] = useState('');
 
-      function handleSubmit(event: React.FormEvent) {
-        event.preventDefault();
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.shiftKey && event.key === 'Enter') {
+      setText(text);
+    } else if (event.key === 'Enter') {
+      event.preventDefault();
       onSubmit(text);
       setText('');
+    }
   }
 
-      return (
-      <form onSubmit={handleSubmit}
-        className="flex flex-col items-center w-3/5
-                   bg-gray-800 p-4 rounded-lg max-w-screen-lg">
-        <input type="text"
-          value={text}
-          onChange={e => setText(e.target.value)}
-          className="bg-gray-700 text-white py-2 px-4 rounded-lg 
-                       focus:outline-none focus:ring-2 focus:ring-blue-500 
-                       focus:border-transparent mb-4 w-full"
-          placeholder="Enter text" />
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    onSubmit(text);
+    setText('');
+  }
 
-        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white 
-      font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2
-       focus:ring-blue-500 focus:border-transparent">Send</button>
-      </form>
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col items-center w-3/5 bg-gray-800 p-4 rounded-lg max-w-screen-lg"
+    >
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={handleKeyDown}
+        className="bg-gray-700 text-white py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4 w-full"
+        placeholder="Enter text"
+      />
 
-      );
+      <button
+        type="submit"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      >
+        Send
+      </button>
+    </form>
+  );
 }
+
