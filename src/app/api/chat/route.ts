@@ -2,9 +2,9 @@ import { NextRequest } from 'next/server';
 import { Configuration } from 'openai';
 import { OpenAIStream, OpenAIStreamPayload, ChatGPTMessage } from "./stream_parsing";
 
-// export const config = {
-//   runtime: "edge",
-// };
+export const config = {
+  runtime: "experimental-edge",
+};
 type Data = {
   message: string;
 };
