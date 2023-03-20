@@ -24,7 +24,6 @@ export async function POST(request: NextRequest) {
     role: msg.isUser ? "user" : "system",
     content: msg.text,
   }));
-  console.log(transformedMessages);
   const payload: OpenAIStreamPayload = {
     model: "gpt-4",
     messages: transformedMessages,
