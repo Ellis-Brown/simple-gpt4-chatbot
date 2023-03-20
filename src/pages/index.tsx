@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { saveAs } from 'file-saver';
 import { InputMessage } from './api/chat';
-import SelectModelDropdown  from '../components/ModelDropdown';
 
 interface Message {
   text: string;
@@ -116,7 +115,6 @@ export default function HomePage() {
         </div>
       </div>
       <div className="text-gray-400">Token Estimate: {tokenEstimate}, Cost Estimate: ${Math.round(tokenEstimate / 1000 * 0.05 * rounding_percision) / rounding_percision}</div>
-      <SelectModelDropdown />
 
       <ChatLog messages={messages} streamedMessage={streamedMessage} />
 
