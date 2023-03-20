@@ -6,11 +6,18 @@ interface Message {
   isUser: boolean;
 }
 /*
-TODO: Need to fix streaming response (seems to only include first chunk)
+TODO: Need to combine messages into one when getting a streamed response
+TODO: Need to track message history and include it in the request
 */
 export default function HomePage() {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [streamedMessage, setStreamedMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+function functionSoon() {
+    console.log(messages);
+}
+
   async function handleMessageSubmit(text: string) {
     setMessages([...messages, { text, isUser: true }]);
     try {
@@ -21,7 +28,7 @@ export default function HomePage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text,
+          messages: [...messages, { text, isUser: true }],
         }),
       });
 
@@ -38,21 +45,25 @@ export default function HomePage() {
       const reader = data.getReader();
       const decoder = new TextDecoder();
       let done = false;
-
+      let full_msg = "";
       while (!done) {
 
         const { value, done: doneReading } = await reader.read();
-
+        
         done = doneReading;
         const chunkValue = decoder.decode(value);
-        console.log(chunkValue);
         if (!done) {
-          setMessages(prevMessages => [...prevMessages, { text: chunkValue, isUser: false }]);
+          setStreamedMessage(msg => msg + chunkValue);
+          full_msg = full_msg + chunkValue;
         }
-        // setGeneratedBios((prev) => prev + chunkValue);
+        
       }
+      console.log(full_msg);
+      setMessages(prevMessages => [...prevMessages, { text: full_msg, isUser: false }])
+      setStreamedMessage('');
       // scrollToBios();
       setLoading(false);
+      console.log(messages);
     } catch (error) {
       console.error("Error: ", error);
     }
@@ -62,26 +73,25 @@ export default function HomePage() {
   return (
     <div className="flex flex-col items-center">
       <div className="flex mt-3">
-      <h1 className="text-2xl font-bold mb-4 p-6 flex">Chat with ChatGPT-4</h1>
+        <h1 className="text-2xl font-bold mb-4 p-6 flex">Chat with ChatGPT-4</h1>
 
-      <div
-          className={`rounded-full w-32 h-12 flex items-center mt-4 justify-center text-white font-bold ${
-            loading ? 'bg-yellow-500' : 'bg-green-500'
-          }`}
+        <div
+          className={`rounded-full w-32 h-12 flex items-center mt-4 justify-center text-white font-bold ${loading ? 'bg-yellow-500' : 'bg-green-500'
+            }`}
         >
           {loading ? 'Loading' : 'Awaiting Input'}
         </div>
-        </div>
-      <ChatLog messages={messages} />
+      </div>
+      <ChatLog messages={messages} streamedMessage={streamedMessage} />
       <ChatInput onSubmit={handleMessageSubmit} />
-      
+<button onClick={functionSoon}> Press me </button>
     </div>
   );
 }
-function ChatLog({ messages }: { messages: Message[] }) {
+function ChatLog({ messages, streamedMessage }: { messages: Message[], streamedMessage: string }) {
+
   return (
-    
-      <div className="m-5 flex flex-col w-3/5">
+    <div className="m-5 flex flex-col w-3/5">
       {messages.map((message, i) => (
         <div
           key={i}
@@ -97,42 +107,66 @@ function ChatLog({ messages }: { messages: Message[] }) {
               color: message.isUser ? '#1C1C1C' : '#FFFFFF',
               borderRadius: '10px',
               padding: '10px 15px',
+              whiteSpace: 'pre-wrap',
             }}
           >
             <p>{message.text}</p>
           </div>
         </div>
       ))}
+      {streamedMessage !== "" && (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-start',
+            margin: '10px 0',
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: '#1C1C1C',
+              color: '#FFFFFF',
+              borderRadius: '10px',
+              padding: '10px 15px',
+              whiteSpace: 'pre-wrap', 
+            }}
+          >
+            <p>{streamedMessage}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
+
 }
 
 
-function ChatInput({ onSubmit }: { onSubmit: (text: string) => void }) {
+
+      function ChatInput({onSubmit}: {onSubmit: (text: string) => void }) {
   const [text, setText] = useState('');
 
-  function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    onSubmit(text);
-    setText('');
+      function handleSubmit(event: React.FormEvent) {
+        event.preventDefault();
+      onSubmit(text);
+      setText('');
   }
 
-  return (
-    <form onSubmit={handleSubmit} 
-          className="flex flex-col items-center w-3/5
+      return (
+      <form onSubmit={handleSubmit}
+        className="flex flex-col items-center w-3/5
                    bg-gray-800 p-4 rounded-lg max-w-screen-lg">
-    <input type="text" 
-           value={text} 
-           onChange={e => setText(e.target.value)} 
-           className="bg-gray-700 text-white py-2 px-4 rounded-lg 
+        <input type="text"
+          value={text}
+          onChange={e => setText(e.target.value)}
+          className="bg-gray-700 text-white py-2 px-4 rounded-lg 
                        focus:outline-none focus:ring-2 focus:ring-blue-500 
-                       focus:border-transparent mb-4 w-full" 
-           placeholder="Enter text" />
-    
-    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white 
+                       focus:border-transparent mb-4 w-full"
+          placeholder="Enter text" />
+
+        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white 
       font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2
        focus:ring-blue-500 focus:border-transparent">Send</button>
-  </form>
-  
-  );
+      </form>
+
+      );
 }

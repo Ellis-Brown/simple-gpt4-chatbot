@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Configuration, OpenAIApi } from 'openai';
-import { OpenAIStream, OpenAIStreamPayload } from "./stream_parsing";
+import { OpenAIStream, OpenAIStreamPayload, ChatGPTMessage, ChatGPTAgent } from "./stream_parsing";
 
-// export const config = {
-//   runtime: "edge",
-// };
-
+export const config = {
+  runtime: "edge",
+};
 type Data = {
   message: string;
 };
@@ -14,17 +13,26 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+type InputMessage = {
+  text: string;
+  isUser: boolean;
+}
 export async function POST(request: NextRequest) {
-   const { text } = await request.json();
-   // Create the OpenAIStreamPayload
-    const payload: OpenAIStreamPayload = {
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: text }],
-      max_tokens: 200,
-      stream: true,
-    };
-   const stream = await OpenAIStream(payload);
-   return new Response(stream);
+  const { messages }: { messages: InputMessage[] } = await request.json();
+
+  const transformedMessages: ChatGPTMessage[] = messages.map(msg => ({
+    role: msg.isUser ? "user" : "system",
+    content: msg.text,
+  }));
+  console.log(transformedMessages);
+  const payload: OpenAIStreamPayload = {
+    model: "gpt-3.5-turbo",
+    messages: transformedMessages,
+    max_tokens: 200,
+    stream: true,
+  };
+  const stream = await OpenAIStream(payload);
+  return new Response(stream);
 }
 
 
