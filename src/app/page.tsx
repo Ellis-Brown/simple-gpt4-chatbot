@@ -21,7 +21,7 @@ const rounding_percision = 100000;
 export default function HomePage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [streamedMessage, setStreamedMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState("Awaiting Input");
   const [tokenEstimate, settokenEstimate] = useState(0);
 
   function combineMessages(messages: Message[]) {
@@ -48,7 +48,7 @@ export default function HomePage() {
     
     setMessages([...messages, { text, isUser: true }]);
     try {
-      setLoading(true);
+      setLoading("Loading");
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: {
@@ -60,12 +60,14 @@ export default function HomePage() {
       });
 
       if (!response.ok) {
+        setLoading("Error");
         throw new Error(response.statusText);
       }
 
       // This data is a ReadableStream
       const data = response.body;
       if (!data) {
+        setLoading("Error");
         return;
       }
 
@@ -89,7 +91,7 @@ export default function HomePage() {
       setMessages(prevMessages => [...prevMessages, { text: full_msg, isUser: false }])
       setStreamedMessage('');
       // scrollToBios();
-      setLoading(false);
+      setLoading("Awaiting Input");
       settokenEstimate(gettokenEstimate(messages, full_msg));
       console.log(messages);
     } catch (error) {
@@ -104,14 +106,16 @@ export default function HomePage() {
         <h1 className="text-2xl font-bold mb-4 p-6 flex">Chat with ChatGPT-4</h1>
 
         <div
-          className={`rounded-full w-32 h-12 flex items-center mt-4 justify-center text-white font-bold ${loading ? 'bg-yellow-500' : 'bg-green-500'
+          className={`rounded-full w-32 h-12 flex items-center mt-4 justify-center text-white font-bold ${loading  == "Loading" ? 'bg-yellow-500' : loading == "Awaiting Input" ? 'bg-green-500' : 'bg-red-500'
             }`}
         >
-          {loading ? 'Loading' : 'Awaiting Input'}
+          {loading}
         </div>
       </div>
       <div className="text-gray-400">Token Estimate: {tokenEstimate}, Cost Estimate: ${Math.round(tokenEstimate / 1000 * 0.05 * rounding_percision) / rounding_percision}</div>
+
       <ChatLog messages={messages} streamedMessage={streamedMessage} />
+
       <ChatInput onSubmit={handleMessageSubmit} />
       
       <button onClick={handleSaveClick} className="mt-7 bg-blue-500 h-10 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
@@ -144,7 +148,7 @@ export default function HomePage() {
 function ChatLog({ messages, streamedMessage }: { messages: Message[], streamedMessage: string }) {
 
   return (
-    <div className="m-5 flex flex-col w-3/5">
+    <div style={{overflow: 'auto'}} className="m-5 flex flex-col w-3/5">
       {messages.map((message, i) => (
         <div
           key={i}
