@@ -105,7 +105,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col items-center">
       <div className="flex mt-3">
-        <h1 className="text-2xl font-bold mb-4 p-6 flex">Chat with ChatGPT-4</h1>
+        <h1 className="text-2xl font-bold mb-4 p-6 flex">Chat with GPT-4</h1>
 
         <div
           className={`rounded-full w-32 h-12 flex items-center mt-4 justify-center text-white font-bold ${loading  == "Loading" ? 'bg-yellow-500' : loading == "Awaiting Input" ? 'bg-green-500' : 'bg-red-500'
