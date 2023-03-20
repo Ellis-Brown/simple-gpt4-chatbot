@@ -54,7 +54,7 @@ import {
               const text = json.choices[0].delta?.content || "";
               const queue = encoder.encode(text);
               controller.enqueue(queue);
-              counter++;
+              
             } catch (e) {
               // maybe parse error
               controller.error(e);
