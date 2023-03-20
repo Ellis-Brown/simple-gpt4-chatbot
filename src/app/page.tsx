@@ -2,17 +2,27 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { saveAs } from 'file-saver';
-import Image from 'next/image';
 
 interface Message {
   text: string;
   isUser: boolean;
 }
 
+function gettokenEstimate(messages: Message[], response: string) {
+  // 4 chars is about 1 token
+  // $0.05 per 1k tokens
+  // https://help.openai.com/en/articles/7127956-how-much-does-gpt-4-cost
+  const totalChars = messages.reduce((acc, msg) => acc + msg.text.length, 0) + response.length;
+  const totalTokens = Math.ceil(totalChars / 4);
+  return totalTokens;
+}
+
+const rounding_percision = 100000;
 export default function HomePage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [streamedMessage, setStreamedMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [tokenEstimate, settokenEstimate] = useState(0);
 
   function combineMessages(messages: Message[]) {
     const transformedMessages = messages.map(msg => ({
@@ -35,6 +45,7 @@ export default function HomePage() {
 
 
   async function handleMessageSubmit(text: string) {
+    
     setMessages([...messages, { text, isUser: true }]);
     try {
       setLoading(true);
@@ -79,6 +90,7 @@ export default function HomePage() {
       setStreamedMessage('');
       // scrollToBios();
       setLoading(false);
+      settokenEstimate(gettokenEstimate(messages, full_msg));
       console.log(messages);
     } catch (error) {
       console.error("Error: ", error);
@@ -98,6 +110,7 @@ export default function HomePage() {
           {loading ? 'Loading' : 'Awaiting Input'}
         </div>
       </div>
+      <div className="text-gray-400">Token Estimate: {tokenEstimate}, Cost Estimate: ${Math.round(tokenEstimate / 1000 * 0.05 * rounding_percision) / rounding_percision}</div>
       <ChatLog messages={messages} streamedMessage={streamedMessage} />
       <ChatInput onSubmit={handleMessageSubmit} />
       
