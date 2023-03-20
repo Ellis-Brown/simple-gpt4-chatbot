@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { saveAs } from 'file-saver';
 import { InputMessage } from './api/chat';
+import SelectModelDropdown  from '../components/ModelDropdown';
 
 interface Message {
   text: string;
@@ -104,17 +105,18 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex mt-3">
+      <div className="flex mt-3 flex-wrap justify-center">
         <h1 className="text-2xl font-bold mb-4 p-6 flex">Chat with GPT-4</h1>
 
         <div
-          className={`rounded-full w-32 h-12 flex items-center mt-4 justify-center text-white font-bold ${loading  == "Loading" ? 'bg-yellow-500' : loading == "Awaiting Input" ? 'bg-green-500' : 'bg-red-500'
+          className={`rounded-full mb-4 w-32 h-12 flex items-center mt-4 justify-center text-white font-bold ${loading  == "Loading" ? 'bg-yellow-500' : loading == "Awaiting Input" ? 'bg-green-500' : 'bg-red-500'
             }`}
         >
           {loading}
         </div>
       </div>
       <div className="text-gray-400">Token Estimate: {tokenEstimate}, Cost Estimate: ${Math.round(tokenEstimate / 1000 * 0.05 * rounding_percision) / rounding_percision}</div>
+      <SelectModelDropdown />
 
       <ChatLog messages={messages} streamedMessage={streamedMessage} />
 
@@ -223,7 +225,7 @@ function ChatInput({onSubmit}: {onSubmit: (text: string) => void }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col items-center w-3/5 bg-gray-800 p-4 rounded-lg max-w-screen-lg"
+      className="flex flex-col items-center w-4/5 bg-gray-800 p-4 rounded-lg max-w-screen-lg"
     >
       <textarea
         value={text}
