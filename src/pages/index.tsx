@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { saveAs } from 'file-saver';
+import Head from "next/head";
 import { InputMessage } from './api/chat';
 
 interface Message {
@@ -103,6 +104,11 @@ export default function HomePage() {
 
 
   return (
+    <>
+    <Head>
+        <title>Chat with GPT-4</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
     <div className="flex flex-col items-center">
       <div className="flex mt-3 flex-wrap justify-center">
         <h1 className="text-2xl font-bold mb-4 p-6 flex">Chat with GPT-4</h1>
@@ -145,6 +151,7 @@ export default function HomePage() {
     
     </div>
     </div>
+    </>
   );
 }
 function ChatLog({ messages, streamedMessage }: { messages: Message[], streamedMessage: string }) {
