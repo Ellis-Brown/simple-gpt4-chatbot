@@ -7,10 +7,7 @@ interface Message {
   text: string;
   isUser: boolean;
 }
-/*
-TODO: Need to combine messages into one when getting a streamed response
-TODO: Need to track message history and include it in the request
-*/
+
 export default function HomePage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [streamedMessage, setStreamedMessage] = useState('');
