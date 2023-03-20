@@ -29,7 +29,6 @@ import {
     const decoder = new TextDecoder();
   
     let counter = 0;
-  
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       headers: {
         "Content-Type": "application/json",

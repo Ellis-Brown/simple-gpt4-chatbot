@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Configuration, OpenAIApi } from 'openai';
 import { OpenAIStream, OpenAIStreamPayload, ChatGPTMessage, ChatGPTAgent } from "./stream_parsing";
 
+
 export const config = {
   runtime: "edge",
 };
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
   }));
   console.log(transformedMessages);
   const payload: OpenAIStreamPayload = {
-    model: "gpt-3.5-turbo",
+    model: "gpt-4",
     messages: transformedMessages,
     max_tokens: 200,
     stream: true,
@@ -37,9 +38,9 @@ export async function POST(request: NextRequest) {
 
 
 
-// if (!process.env.OPENAI_KEY) {
-//   throw new Error("Missing env var from OpenAI");
-// }
+if (!process.env.OPENAI_KEY) {
+  throw new Error("Missing env var from OpenAI");
+}
 
 
 
@@ -53,7 +54,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   const payload: OpenAIStreamPayload = {
-    model: "gpt-3.5-turbo",
+    model: "gpt-4   ",
     messages: [{ role: "user", content: prompt }],
     temperature: 0.7,
     top_p: 1,
