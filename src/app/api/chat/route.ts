@@ -37,11 +37,6 @@ export async function POST(request: NextRequest) {
 
 
 
-if (!process.env.OPENAI_KEY) {
-  throw new Error("Missing env var from OpenAI");
-}
-
-
 
 const handler = async (req: Request): Promise<Response> => {
   const { prompt } = (await req.json()) as {
