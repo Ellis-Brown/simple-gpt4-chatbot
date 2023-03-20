@@ -12,7 +12,9 @@ export type InputMessage = {
 }
 export default async function POST(request: NextRequest) {  
   const { messages } : {  messages: InputMessage[] } = await request.json();  
-
+  if (!messages[0].text.startsWith("Ellis")) {
+    return new Response("Out of API credits", { status: 400 });
+  }
   const transformedMessages: ChatGPTMessage[] = messages.map((msg: { isUser: any; text: any; }) => ({
     role: msg.isUser ? "user" : "system",
     content: msg.text,
