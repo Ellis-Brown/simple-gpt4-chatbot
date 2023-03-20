@@ -2,9 +2,9 @@ import { NextRequest } from 'next/server';
 import { Configuration } from 'openai';
 import { OpenAIStream, OpenAIStreamPayload, ChatGPTMessage } from "./stream_parsing";
 
-export const config = {
-  runtime: "edge",
-};
+// export const config = {
+//   runtime: "edge",
+// };
 type Data = {
   message: string;
 };
@@ -14,7 +14,7 @@ export type InputMessage = {
   text: string;
   isUser: boolean;
 }
-export async function POST(request: NextRequest) {  
+export async function POST(request: NextRequest, response: Response) {  
   const { messages } : {  messages: InputMessage[] } = await request.json(); //  { messages: InputMessage[] 
 
   const transformedMessages: ChatGPTMessage[] = messages.map((msg: { isUser: any; text: any; }) => ({
