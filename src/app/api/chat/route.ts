@@ -9,16 +9,13 @@ type Data = {
   message: string;
 };
 
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
-type InputMessage = {
+export type InputMessage = {
   text: string;
   isUser: boolean;
 }
 export async function POST(request: NextRequest) {  
-  const { messages } = await request.json(); //  { messages: InputMessage[] 
+  const { messages } : {  messages: InputMessage[] } = await request.json(); //  { messages: InputMessage[] 
 
   const transformedMessages: ChatGPTMessage[] = messages.map((msg: { isUser: any; text: any; }) => ({
     role: msg.isUser ? "user" : "system",

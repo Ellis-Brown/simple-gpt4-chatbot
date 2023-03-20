@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { saveAs } from 'file-saver';
+import { InputMessage } from 'api/chat/route.ts';
 
 interface Message {
   text: string;
@@ -47,6 +48,7 @@ export default function HomePage() {
   async function handleMessageSubmit(text: string) {
     
     setMessages([...messages, { text, isUser: true }]);
+    const msgs : InputMessage[] = [...messages, { text, isUser: true }];
     try {
       setLoading("Loading");
       const response = await fetch("/api/chat", {
@@ -55,7 +57,7 @@ export default function HomePage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: [...messages, { text, isUser: true }],
+          messages: msgs
         }),
       });
 
