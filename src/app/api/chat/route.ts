@@ -18,9 +18,9 @@ type InputMessage = {
   isUser: boolean;
 }
 export async function POST(request: NextRequest) {
-  const { messages } = await request.json();
+  const { messages } = await request.json(); //  { messages: InputMessage[] 
 
-  const transformedMessages: ChatGPTMessage[] = messages.map(msg => ({
+  const transformedMessages: ChatGPTMessage[] = messages.map((msg: { isUser: any; text: any; }) => ({
     role: msg.isUser ? "user" : "system",
     content: msg.text,
   }));
