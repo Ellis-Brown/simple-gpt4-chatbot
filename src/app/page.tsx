@@ -11,21 +11,49 @@ export default function HomePage() {
 
   async function handleMessageSubmit(text: string) {
     setMessages([...messages, { text, isUser: true }]);
+  try {
 
-    try {
-      const res = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
-      });
+     const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        text,
+      }),
+    });
 
-      const { message } = await res.json();
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
 
-      setMessages([...messages, { text: message, isUser: false }]);
+    // This data is a ReadableStream
+    const data = response.body;
+    if (!data) {
+      return;
+    }
+
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+
+    while (!done) {
+      
+      const { value, done: doneReading } = await reader.read();
+      
+      done = doneReading;
+      const chunkValue = decoder.decode(value); 
+      console.log(chunkValue);   
+      setMessages(prevMessages => [...prevMessages, { text: chunkValue, isUser: false }]);
+      // setGeneratedBios((prev) => prev + chunkValue);
+    }
+    // scrollToBios();
+    // setLoading(false);
     } catch (error) {
-      console.error(error);
+      console.error("Error: ", error);
     }
   }
+  
 
   return (
     <div>
