@@ -110,6 +110,7 @@ export default function HomePage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
     <div className="flex flex-col items-center">
+      <h1 className="bg-red-900 p-4 rounded-md m-4">SORRY, I'M OUT OF API CREDITS. If you want me to load more, donate on venmo @ellis434890, I will give you a passcode </h1>
       <div className="flex mt-3 flex-wrap justify-center">
         <h1 className="text-2xl font-bold mb-4 p-6 flex">Chat with GPT-4</h1>
 
