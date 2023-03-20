@@ -100,11 +100,11 @@ export default function HomePage() {
       </div>
       <ChatLog messages={messages} streamedMessage={streamedMessage} />
       <ChatInput onSubmit={handleMessageSubmit} />
-      <div className="flex flex-row justify-between w-1/2 ">
-      <button onClick={handleSaveClick} className="mb-4 mt-7 bg-blue-500 h-10 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+      
+      <button onClick={handleSaveClick} className="mt-7 bg-blue-500 h-10 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
         Save Chat History
       </button>
-      <div className="flex items-center justify-center my-4 pt-3 ">
+      <div className="flex items-center justify-center my-3 pt-3 ">
         {/* https://github.com/Nutlope/twitterbio the github formatting was borrowed from here */}
       <a
           className="flex max-w-fit items-center justify-center space-x-2 rounded-full border border-gray-300 bg-gray-700 px-4 py-2 text-sm text-gray-100 shadow-md transition-colors hover:bg-gray-900 mb-5"
@@ -123,7 +123,7 @@ export default function HomePage() {
     </svg>
           <p>Star on GitHub</p>
         </a>
-    </div>
+    
     </div>
     </div>
   );

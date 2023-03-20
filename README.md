@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+
+# Overview
+I decided to make ChatGPT-4 chatbot, for learning the technologies. I also thought
+it could be fun to give access to GPT-4 to my friends. I have $4 of compute on
+this account, please be careful with your tests, its not infinite
+
 ## Getting Started
 
 First, run the development server:
