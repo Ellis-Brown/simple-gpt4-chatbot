@@ -153,13 +153,13 @@ export default function HomePage() {
         </a>
     
     </div>
-      <input
+      {/* <input
           className="shadow appearance-none border rounded text-gray-300 bg-gray-900 p-1 w-1/3 mt-3 leading-tight focus:outline-none focus:shadow-outline gray-900 border-gray-800"
           type="text"
           placeholder="(Optional) sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
-        />
+        /> */}
 
    
     </div>
