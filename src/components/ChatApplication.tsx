@@ -11,8 +11,7 @@ interface Message {
   isUser: boolean;
   model: string,
 }
-
-function gettokenEstimate(messages: Message[], response: string) {
+function getTokenEstimate(messages: Message[], response: string) {
   // 4 chars is about 1 token
   // $0.05 per 1k tokens
   // https://help.openai.com/en/articles/7127956-how-much-does-gpt-4-cost
@@ -26,8 +25,9 @@ export default function HomePage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [streamedMessage, setStreamedMessage] = useState('');
   const [loading, setLoading] = useState("Awaiting Input");
-  const [tokenEstimate, settokenEstimate] = useState(0);
+  const [tokenEstimate, setTokenEstimate] = useState(0);
   const [currentModel, setCurrentModel] = useState("GPT-4");
+  const [apiKey, setApiKey] = useState('');
 
   function combineMessages(messages: Message[]) {
     const transformedMessages = messages.map(msg => ({
@@ -51,7 +51,6 @@ export default function HomePage() {
 
 
   async function handleMessageSubmit(text: string) {
-    
     setMessages([...messages, { text, isUser: true, model: "user" }]);
     const msgs : InputMessage[] = [...messages, { text, isUser: true }];
     try {
@@ -64,6 +63,7 @@ export default function HomePage() {
         body: JSON.stringify({
           messages: msgs,
           model: currentModel,
+          apiKey: apiKey,
         }),
       });
 
@@ -100,7 +100,7 @@ export default function HomePage() {
       setStreamedMessage('');
       // scrollToBios();
       setLoading("Awaiting Input");
-      settokenEstimate(gettokenEstimate(messages, full_msg));
+      setTokenEstimate(tokenEstimate + getTokenEstimate(messages, full_msg));
       console.log(messages);
     } catch (error) {
       console.error("Error: ", error);
@@ -153,6 +153,15 @@ export default function HomePage() {
         </a>
     
     </div>
+      <input
+          className="shadow appearance-none border rounded text-gray-300 bg-gray-900 p-1 w-1/3 mt-3 leading-tight focus:outline-none focus:shadow-outline gray-900 border-gray-800"
+          type="text"
+          placeholder="(Optional) sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+        />
+
+   
     </div>
     </>
   );
