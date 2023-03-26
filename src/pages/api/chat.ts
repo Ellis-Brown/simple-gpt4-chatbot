@@ -43,6 +43,6 @@ export default async function POST(request: NextRequest) {
   }
   catch (error) {
     console.log(error);
-    return new Response();
+    return new Error();
   }
 }

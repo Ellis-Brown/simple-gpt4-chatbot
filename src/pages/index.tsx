@@ -9,6 +9,7 @@ import SelectModel from '@/components/SelectModel';
 interface Message {
   text: string;
   isUser: boolean;
+  model: string,
 }
 
 function gettokenEstimate(messages: Message[], response: string) {
@@ -32,6 +33,7 @@ export default function HomePage() {
     const transformedMessages = messages.map(msg => ({
       role: msg.isUser ? "user" : "system",
       content: msg.text,
+      model: msg.model,
     }));
 
     return transformedMessages
@@ -50,7 +52,7 @@ export default function HomePage() {
 
   async function handleMessageSubmit(text: string) {
     
-    setMessages([...messages, { text, isUser: true }]);
+    setMessages([...messages, { text, isUser: true, model: "user" }]);
     const msgs : InputMessage[] = [...messages, { text, isUser: true }];
     try {
       setLoading("Loading");
@@ -94,7 +96,7 @@ export default function HomePage() {
 
       }
       console.log(full_msg);
-      setMessages(prevMessages => [...prevMessages, { text: full_msg, isUser: false }])
+      setMessages(prevMessages => [...prevMessages, { text: full_msg, isUser: false, model: currentModel }])
       setStreamedMessage('');
       // scrollToBios();
       setLoading("Awaiting Input");
