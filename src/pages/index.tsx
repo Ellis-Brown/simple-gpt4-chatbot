@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import { saveAs } from 'file-saver';
 import Head from "next/head";
 import { InputMessage } from './api/chat';
+import SelectModel from '@/components/SelectModel';
 
 interface Message {
   text: string;
@@ -115,16 +116,11 @@ export default function HomePage() {
       </Head>
     <div className="flex flex-col items-center">
       <h1 className="bg-yellow-600 p-4 rounded-md m-4">Currently restricted to users with the passcode. Text me and donate on venmo @ellis434890, I will give you a passcode </h1>
-      <div className="flex mt-3 flex-wrap justify-center">
-        <h1 className="text-2xl font-bold mb-4 p-6 flex">Chat with {currentModel}</h1>
-        <SetModel setChatModel={setModel} />
-        <div
-          className={`rounded-full mb-4 w-32 h-12 flex items-center mt-4 justify-center text-white font-bold ${loading  == "Loading" ? 'bg-yellow-500' : loading == "Awaiting Input" ? 'bg-green-500' : 'bg-red-500'
-            }`}
-        >
-          {loading}
-        </div>
-      </div>
+      
+        {/* <h1 className="text-2xl font-bold p-1 flex ">Chat with</h1> */}
+        <SelectModel loading={loading} model={currentModel} setChatModel={setModel} />
+        
+      
       <div className="text-gray-400">Token Estimate: {tokenEstimate}, Cost Estimate: ${Math.round(tokenEstimate / 1000 * 0.05 * rounding_percision) / rounding_percision}</div>
 
       <ChatLog messages={messages} streamedMessage={streamedMessage} />
@@ -250,36 +246,6 @@ function ChatInput({onSubmit}: {onSubmit: (text: string) => void }) {
         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
       >
         Send
-      </button>
-    </form>
-  );
-}
-
-function SetModel({setChatModel}: {setChatModel: (text: string) => void }) {
-  const [text, setText] = useState("GPT-4");
-
-  function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-    setChatModel(text);
-    setText('');
-  }
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex m-2 p-2 justify-center flex-col"
-    >
-      <textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        className=""
-        placeholder="current model"
-      />
-
-      <button
-        type="submit"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-      >
-        Set Model
       </button>
     </form>
   );
