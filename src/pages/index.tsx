@@ -32,8 +32,8 @@ export default function HomePage() {
   function combineMessages(messages: Message[]) {
     const transformedMessages = messages.map(msg => ({
       role: msg.isUser ? "user" : "system",
-      content: msg.text,
       model: msg.model,
+      content: msg.text,
     }));
 
     return transformedMessages
@@ -41,7 +41,7 @@ export default function HomePage() {
 
   function handleSaveClick() {
     const combinedMessages = combineMessages(messages);
-    console.log(JSON.stringify(combinedMessages, null, 2));
+    console.log(JSON.stringify(combinedMessages, null, 4)); // 4 indentation
     const blob = new Blob([JSON.stringify(combinedMessages)], { type: 'text/json;charset=utf-8' });
     // Get the current time for the filename
     const date = new Date();
