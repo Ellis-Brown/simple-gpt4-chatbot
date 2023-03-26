@@ -25,6 +25,7 @@ export default function HomePage() {
   const [streamedMessage, setStreamedMessage] = useState('');
   const [loading, setLoading] = useState("Awaiting Input");
   const [tokenEstimate, settokenEstimate] = useState(0);
+  const [currentModel, setCurrentModel] = useState("GPT-4");
 
   function combineMessages(messages: Message[]) {
     const transformedMessages = messages.map(msg => ({
@@ -58,7 +59,8 @@ export default function HomePage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          messages: msgs
+          messages: msgs,
+          model: currentModel,
         }),
       });
 
@@ -101,7 +103,9 @@ export default function HomePage() {
       console.error("Error: ", error);
     }
   }
-
+  function setModel(model: string) {
+    setCurrentModel(model);
+  }
 
   return (
     <>
@@ -112,8 +116,8 @@ export default function HomePage() {
     <div className="flex flex-col items-center">
       <h1 className="bg-yellow-600 p-4 rounded-md m-4">Currently restricted to users with the passcode. Text me and donate on venmo @ellis434890, I will give you a passcode </h1>
       <div className="flex mt-3 flex-wrap justify-center">
-        <h1 className="text-2xl font-bold mb-4 p-6 flex">Chat with GPT-4</h1>
-
+        <h1 className="text-2xl font-bold mb-4 p-6 flex">Chat with {currentModel}</h1>
+        <SetModel setChatModel={setModel} />
         <div
           className={`rounded-full mb-4 w-32 h-12 flex items-center mt-4 justify-center text-white font-bold ${loading  == "Loading" ? 'bg-yellow-500' : loading == "Awaiting Input" ? 'bg-green-500' : 'bg-red-500'
             }`}
@@ -251,3 +255,32 @@ function ChatInput({onSubmit}: {onSubmit: (text: string) => void }) {
   );
 }
 
+function SetModel({setChatModel}: {setChatModel: (text: string) => void }) {
+  const [text, setText] = useState("GPT-4");
+
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    setChatModel(text);
+    setText('');
+  }
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="flex m-2 p-2 justify-center flex-col"
+    >
+      <textarea
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        className=""
+        placeholder="current model"
+      />
+
+      <button
+        type="submit"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+      >
+        Set Model
+      </button>
+    </form>
+  );
+}

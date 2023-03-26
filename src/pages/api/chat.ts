@@ -10,8 +10,17 @@ export type InputMessage = {
   text: string;
   isUser: boolean;
 }
+
+function validateModel(model: string) {
+  const possible_models = ["gpt-4", "gpt-3.5-turbo", "code-davinci-002"];
+  if (model.toLowerCase() in possible_models) {
+    return model.toLowerCase();
+  }
+  throw new Error("Invalid Model Name");
+} 
+
 export default async function POST(request: NextRequest) {  
-  const { messages } : {  messages: InputMessage[] } = await request.json();  
+  const { messages, model } : {  messages: InputMessage[], model: string} = await request.json();  
   const passcode = process.env.PAID_ONLY;
   if (!passcode) {
     return new Response("Sorry, access is limited to approved beta testers", { status: 400 });
@@ -23,8 +32,9 @@ export default async function POST(request: NextRequest) {
     role: msg.isUser ? "user" : "system",
     content: msg.text,
   }));
+  
   const payload: OpenAIStreamPayload = {
-    model: "gpt-4",
+    model: validateModel(model),
     messages: transformedMessages,
     max_tokens: 1000,
     stream: true,

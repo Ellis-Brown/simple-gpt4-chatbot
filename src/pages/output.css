@@ -521,6 +521,10 @@ video {
   margin: 1.25rem;
 }
 
+.m-2 {
+  margin: 0.5rem;
+}
+
 .my-3 {
   margin-top: 0.75rem;
   margin-bottom: 0.75rem;
@@ -581,6 +585,10 @@ video {
 
 .max-w-screen-lg {
   max-width: 1024px;
+}
+
+.flex-row {
+  flex-direction: row;
 }
 
 .flex-col {
@@ -667,6 +675,10 @@ video {
 
 .p-6 {
   padding: 1.5rem;
+}
+
+.p-2 {
+  padding: 0.5rem;
 }
 
 .px-4 {
