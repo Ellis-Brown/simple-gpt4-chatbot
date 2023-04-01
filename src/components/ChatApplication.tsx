@@ -13,7 +13,7 @@ interface Message {
 }
 function getTokenEstimate(messages: Message[], response: string) {
   // 4 chars is about 1 token
-  // $0.05 per 1k tokens
+  // $0.12 per 1k tokens
   // https://help.openai.com/en/articles/7127956-how-much-does-gpt-4-cost
   const totalChars = messages.reduce((acc, msg) => acc + msg.text.length, 0) + response.length;
   const totalTokens = Math.ceil(totalChars / 4);
@@ -123,7 +123,7 @@ export default function HomePage() {
         <SelectModel loading={loading} model={currentModel} setChatModel={setModel} />
         
       
-      <div className="text-gray-400">Token Estimate: {tokenEstimate}, Cost Estimate: ${Math.round(tokenEstimate / 1000 * 0.05 * rounding_percision) / rounding_percision}</div>
+      <div className="text-gray-400">Token Estimate: {tokenEstimate}, Cost Estimate: ${Math.round(tokenEstimate / 1000 * 0.12 * rounding_percision) / rounding_percision}</div>
 
       <ChatLog messages={messages} streamedMessage={streamedMessage} />
 
