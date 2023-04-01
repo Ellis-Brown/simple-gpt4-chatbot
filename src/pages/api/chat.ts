@@ -11,7 +11,7 @@ export type InputMessage = {
 }
 
 function validateModel(model: string) {
-  const possible_models = ["gpt-4", "gpt-3.5-turbo", "code-davinci-002"];
+  const possible_models = ["gpt-4", "gpt-3.5-turbo", "code-davinci-002", "gpt-4-32k"];
   if (possible_models.includes(model.toLowerCase())) {
     return model.toLowerCase();
   } throw new Error("Invalid Model Name");
@@ -35,7 +35,6 @@ export default async function POST(request: NextRequest) {
     const payload: OpenAIStreamPayload = {
       model: validateModel(model),
       messages: transformedMessages,
-      max_tokens: 1000,
       stream: true,
     };
     const stream = await OpenAIStream(payload);

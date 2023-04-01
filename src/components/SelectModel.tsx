@@ -31,6 +31,10 @@ export default function SelectModel({ setChatModel, model, loading }: { model: s
 
             GPT-4
           </DropdownMenu.RadioItem>
+          <DropdownMenu.RadioItem value="gpt-4-32k">
+
+          gpt-4-32k
+</DropdownMenu.RadioItem>
           <DropdownMenu.RadioItem value="GPT-3.5-turbo">
 
             GPT-3.5-turbo
